@@ -1,0 +1,117 @@
+//Repolist component
+class Repolist extends React.Component {
+ render() {
+  return(
+   <div>
+     <h3 className="title">Repository Details</h3>
+     <button className="button" onClick={this.props.repofun}>Click here</button>
+      
+     <ul className="repo-list">
+       {this.props.repos.map(function(result) {
+              return <div>
+                     <div className="list-group-item ">
+                      <ul key={result.id} >
+                      <h3>{result.name}</h3>
+                        <li className="list-group-item-text">{result.description}</li>
+                        <li className="list-three">{result.url}</li>
+                        <li className="list-four">{result.open_issues_count}</li>
+                        <li className="list-five">{result.size}</li>
+                        <li>{result.stargazers_count}</li>
+                        <li>{result.forks_count}</li>
+                      </ul>
+                     </div>
+                     </div>
+            })}
+        </ul>
+   </div>
+  )
+ }
+}
+
+//Userbadge component
+class Userbadge extends React.Component {
+constructor(props) {
+super(props);
+ this.state = {
+   user: null,
+   repo: []
+    };
+}
+
+getUser = () => {
+ let test = this.refs.name.value;
+ fetch(`https://itunes.apple.com/search?term=${test}&limit=8`)
+   .then(response => response.json())
+   .then(data => {
+      console.log(data);
+      const albums = data.results.map(album => album);
+      console.log(albums);
+        this.setState({
+        user: albums
+     })
+   })
+   .catch((error) => console.log('Please try with right name!'));
+  }
+  
+userRepos = () => {
+  const test = this.refs.name.value;
+  fetch(`https://itunes.apple.com/search?term=${test}&limit=8`)
+   .then(response => response.json())
+   .then(data => {
+     this.setState({
+        repo: data.results
+     })
+   })
+} 
+ 
+render() {
+return(
+ <div className="row">
+  <input type='text' placeholder='github username' ref='name' />
+  <button className="button" onClick={this.getUser}>Search</button>
+ {this.state.user ?
+ <div>
+  <h3 className='title'>User Details</h3>
+  <h3> NNNN {this.state.artistName}</h3>
+  <ul className="user-list">
+      {this.state.user.map(function(itemm) {
+              return <div>
+                     
+                     <div className="list-group-item ">
+                        <img
+                className='avatar'
+                src={itemm.artworkUrl100}
+                alt={'avatar for ' + itemm.artistName}
+                        />
+                      <ul key={itemm.trackId} >
+                       <li>{itemm.trackName}</li>
+                       <li>{'Name: ' + itemm.artistName}</li>
+    <li>{'Country: ' + itemm.country}</li>
+    <li>{'Track Name: ' + itemm.trackName}</li>
+                      </ul>
+                     </div>
+                     </div>
+            })}
+  </ul>  
+  </div> : null}
+  <Repolist repos={this.state.repo} repofun={this.userRepos} />
+  </div>
+ );
+}
+}
+
+// Search Component
+class Search extends React.Component {
+ render() {    
+    return (
+    <div>
+      <Userbadge />
+    </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Search />,
+  document.getElementById('container')
+);
